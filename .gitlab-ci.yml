@@ -1,0 +1,31 @@
+stages:
+  - deploy
+
+deploy-to-vercel:
+  stage: deploy
+  image: node:13.10.1-alpine3.10
+
+  environment:
+    name: vercel/dev
+
+  script:
+    - npm i vercel
+    - DEPLOYMENT_URL=$(./node_modules/.bin/vercel --name $CI_PROJECT_NAME --confirm -t $VERCEL_TOKEN)
+    # promote to the vercel's production
+    - ./node_modules/.bin/vercel --prod -t $VERCEL_TOKEN
+
+deploy-to-uat:
+  stage: deploy
+  image: node:13.10.1-alpine3.10
+
+  environment:
+    name: vercel/dev
+
+  script:
+    - npm i vercel
+    - DEPLOYMENT_URL=$(./node_modules/.bin/vercel --name nextverse-uat --confirm -t $VERCEL_TOKEN)
+    # promote to the vercel's production
+    - ./node_modules/.bin/vercel --prod -t $VERCEL_TOKEN
+
+  only:
+    - master
